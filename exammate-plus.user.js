@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.5.1
+// @version      1.5.2
 // @description  Exammate+
-// @author       You
+// @author       cavxs
+// @homepage     https://github.com/cavxs
 // @match        https://www.exam-mate.com/topicalpastpapers/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=exam-mate.com
 // @grant        none
@@ -250,7 +251,7 @@
 
       this.counterContainer.addEventListener("click", () => {
         this.count = 0;
-        setCountText(0);
+        this._updateCountText();
         setStorageItem(
           LOCALSTORAGEVALUES.today_solved,
           JSON.stringify(this.count)
