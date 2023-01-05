@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.4.5
+// @version      1.5
 // @description  Exammate+
 // @author       You
 // @match        https://www.exam-mate.com/topicalpastpapers/*
@@ -11,7 +11,73 @@
 
 (function () {
   "use strict";
-
+  const niceAudio = new Audio(
+    "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=correct-2-46134.mp3"
+  );
+  const wow = new Audio("https://www.myinstants.com/media/sounds/omgwow.mp3");
+  const EMOJIS = [
+    {
+      emoji: "☹️",
+      at: 1,
+    },
+    {
+      emoji: "🙁",
+      at: 3,
+    },
+    {
+      emoji: "😮",
+      at: 5,
+    },
+    {
+      emoji: "🙂",
+      at: 8,
+    },
+    {
+      emoji: "😄",
+      at: 10,
+    },
+    {
+      emoji: "😂",
+      at: 15,
+    },
+    {
+      emoji: "😍",
+      at: 20,
+    },
+    {
+      emoji: "😱",
+      at: 25,
+    },
+    {
+      emoji: "🥵",
+      at: 30,
+    },
+    {
+      emoji: "😈",
+      at: 35,
+    },
+    {
+      emoji: "🥶",
+      at: 40,
+    },
+    {
+      emoji: "☠️",
+      at: 45,
+    },
+    {
+      emoji: "🦸‍♀️",
+      at: 50,
+    },
+  ];
+  const MOTIVATIONAL_MESSAGES = [
+    "You can do this!",
+    "A*s coming on the way for sure!",
+    "How many more wtf?! stoppppp",
+    "How are you doing that??",
+    "If you continue like this, you can certainly do this",
+    "Bruh.. you are so much bigger than an A*!",
+    "If it was easy, everyone would be doing it 😎",
+  ];
   class Stats {
     constructor(stats, subject) {
       this.stats = stats || this.initStatsObject(subject);
@@ -103,7 +169,7 @@
     }
     _createAndReturnTopicIfNotExists(topicName) {
       if (this._topicExists(topicName)) {
-        return _getSubProp("topics")[topicName];
+        return this._getSubProp("topics")[topicName];
       } else {
         return this._createTopic(topicName);
       }
@@ -157,7 +223,6 @@
       this.countText.style.textAlign = "center";
       this.countText.style.lineHeight = "37px";
       this.countText.style.fontWeight = "bold";
-      this.countText.textContent = this.count;
 
       this.face = document.createElement("div");
       this.face.style.position = "fixed";
@@ -167,7 +232,6 @@
       this.face.style.fontSize = "30px";
       this.face.style.textAlign = "center";
       this.face.style.userSelect = "none";
-      this.face.textContent = "☹️";
 
       this.counterContainer.addEventListener("click", () => {
         this.count = 0;
@@ -178,6 +242,8 @@
         );
       });
 
+      this._updateCountText();
+
       this.counterContainer.appendChild(this.countText);
       this.counterContainer.appendChild(this.face);
       document.body.appendChild(this.counterContainer);
@@ -185,10 +251,8 @@
     _updateFace(cnt) {
       let chosen_emoji = EMOJIS[0].emoji;
       for (const emoji_at_val of EMOJIS) {
-        if (cnt >= emoji_at_val.at) {
-          chosen_emoji = emoji_at_val.emoji;
-          break;
-        }
+        if (cnt < emoji_at_val.at) break;
+        chosen_emoji = emoji_at_val.emoji;
       }
       this.face.textContent = chosen_emoji;
     }
@@ -208,70 +272,69 @@
       this._updateCountText();
     }
   }
+  class MotivatorMessages {
+    constructor() {
+      this.motivatorContainerScreen = document.createElement("div");
+      this.motivatorContainerScreen.style.display = "flex";
+      this.motivatorContainerScreen.style.alignItems = "center";
+      this.motivatorContainerScreen.style.justifyContent = "center";
+      this.motivatorContainerScreen.style.position = "absolute";
+      this.motivatorContainerScreen.style.backgroundColor =
+        "rgba(0, 0, 0, 0.3)";
+      this.motivatorContainerScreen.style.width = "100%";
+      this.motivatorContainerScreen.style.height = "100%";
+      this.motivatorContainerScreen.style.top = "0";
+      this.motivatorContainerScreen.style.left = "0";
+      this.motivatorContainerScreen.style.pointerEvents = "none";
+      this.motivatorContainerScreen.style.textAlign = "center";
+      this.motivatorContainerScreen.style.color = "#ff0000";
+      this.motivatorContainerScreen.style.fontSize = "50px";
+      this.motivatorContainerScreen.style.fontWeight = "bolder";
+      this.motivatorContainerScreen.style.fontFamily =
+        "'Helvetica', sans-serif";
+      this.motivatorContainerScreen.classList.add("motivator");
+      const styles = `
+   .motivator {
+   transition: 0.5s all;
+   opacity: 0;
+   }
+  .motivator.showm {
+  transition: 0.2s all;
+  opacity: 1;
+  }
+`;
+      var styleSheet = document.createElement("style");
+      styleSheet.innerText = styles;
 
-  const niceAudio = new Audio(
-    "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=correct-2-46134.mp3"
-  );
+      document.head.appendChild(styleSheet);
+      document.body.appendChild(this.motivatorContainerScreen);
+    }
+    show(msg) {
+      this.motivatorContainerScreen.textContent = msg;
+      this.motivatorContainerScreen.classList.add("showm");
+      setTimeout(() => {
+        this.motivatorContainerScreen.classList.remove("showm");
+      }, 3000);
+      wow.play();
+    }
+    showRandom() {
+      const showOrNotArr = [0, 0, 0, 0, 1];
+      const showOrNot =
+        showOrNotArr[Math.floor(Math.random() * showOrNotArr.length)];
+      const message =
+        MOTIVATIONAL_MESSAGES[
+          Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)
+        ];
+      if (showOrNot) this.show(message);
+    }
+  }
+
   const LOCALSTORAGEVALUES = {
     questions_solved: "solved",
     today_solved: "count",
     last_day_solved: "lastDay",
     stats: "stats",
   };
-  const EMOJIS = [
-    {
-      emoji: "☹️",
-      at: 1,
-    },
-    {
-      emoji: "🙁",
-      at: 3,
-    },
-    {
-      emoji: "😮",
-      at: 5,
-    },
-    {
-      emoji: "🙂",
-      at: 8,
-    },
-    {
-      emoji: "😄",
-      at: 10,
-    },
-    {
-      emoji: "😂",
-      at: 15,
-    },
-    {
-      emoji: "😍",
-      at: 20,
-    },
-    {
-      emoji: "😱",
-      at: 25,
-    },
-    {
-      emoji: "🥵",
-      at: 30,
-    },
-    {
-      emoji: "😈",
-      at: 35,
-    },
-    {
-      emoji: "🥶",
-      at: 40,
-    },
-    {
-      emoji: "☠️",
-      at: 45,
-    },
-    {
-      emoji: "🦸‍♀️",
-      at: 50,
-    },
-  ];
 
   let solved = getFromStorage(LOCALSTORAGEVALUES.questions_solved, []);
   let lastDay = getFromStorage(LOCALSTORAGEVALUES.last_day_solved, 0);
@@ -291,6 +354,7 @@
     getFromStorage(LOCALSTORAGEVALUES.stats, null),
     subject
   );
+  const motivator = new MotivatorMessages();
 
   //console.log(today, lastDay);
   if (!(today === lastDay)) {
@@ -371,6 +435,7 @@
       niceAudio.play();
       counter.updateCount(1);
       stats.updateTopics(fncEl.subjectTopics, 1);
+      motivator.showRandom();
     } else {
       solved.splice(solved.indexOf(fncEl.getAttribute("id")), 1);
       counter.updateCount(-1);
