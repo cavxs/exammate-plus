@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.5
+// @version      1.5.1
 // @description  Exammate+
 // @author       You
 // @match        https://www.exam-mate.com/topicalpastpapers/*
@@ -80,8 +80,8 @@
   ];
   class Stats {
     constructor(stats, subject) {
-      this.stats = stats || this.initStatsObject(subject);
       this.subject = subject || { id: "00", name: "nosubject" };
+      this.stats = this.initStatsObject(stats);
 
       this.createStatsElement();
     }
@@ -148,16 +148,31 @@
       this.subject.id = String(id);
       this.subject.name = String(name);
     }
-    initStatsObject(subject) {
-      const newStatsObj = {};
-      const subjectId = String(subject.id);
-      const subjectName = String(subject.name);
-      newStatsObj["total"] = 0;
-      newStatsObj[subjectId] = {};
-      newStatsObj[subjectId]["name"] = subjectName;
-      newStatsObj[subjectId]["total"] = 0;
-      newStatsObj[subjectId]["topics"] = {};
+    initStatsObject(stats) {
+      let newStatsObj = stats ? { ...stats } : {};
+      if (!newStatsObj["total"]) newStatsObj["total"] = 0;
+      if (!newStatsObj[this.subject.id]) newStatsObj[this.subject.id] = {};
+      if (!newStatsObj[this.subject.id]["name"])
+        newStatsObj[this.subject.id]["name"] = this.subject.name;
+      if (!newStatsObj[this.subject.id]["total"])
+        newStatsObj[this.subject.id]["total"] = 0;
+      if (!newStatsObj[this.subject.id]["topics"])
+        newStatsObj[this.subject.id]["topics"] = {};
+
+      // update old version table
+      for (const s in newStatsObj) {
+        for (const o in newStatsObj[s]) {
+          if (o !== "total" && o !== "name" && o !== "topics") {
+            console.log(o);
+            if (!newStatsObj[s]["topics"]) newStatsObj[s]["topics"] = {};
+            newStatsObj[s]["topics"][o] = { ...newStatsObj[s][o] };
+            delete newStatsObj[s][o];
+          }
+        }
+      }
+
       setStorageItem(LOCALSTORAGEVALUES.stats, newStatsObj);
+
       return newStatsObj;
     }
     _topicExists(topicName) {
