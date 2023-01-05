@@ -318,7 +318,7 @@
       wow.play();
     }
     showRandom() {
-      const showOrNotArr = [0, 0, 0, 0, 1];
+      const showOrNotArr = [0, 0, 1];
       const showOrNot =
         showOrNotArr[Math.floor(Math.random() * showOrNotArr.length)];
       const message =
