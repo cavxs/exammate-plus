@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.5.2
+// @version      1.6.0
 // @description  Exammate+
 // @author       cavxs
 // @homepage     https://github.com/cavxs
@@ -15,15 +15,28 @@
   const niceAudio = new Audio(
     "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=correct-2-46134.mp3"
   );
-  const wow = new Audio("https://www.myinstants.com/media/sounds/omgwow.mp3");
+  const mCipher = cipher("money4ever");
+  const mDecipher = decipher("money4ever");
+  const wows = [
+    new Audio(
+      "https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3"
+    ),
+    new Audio(
+      "https://dm0qx8t0i9gc9.cloudfront.net/previews/audio/BsTwCwBHBjzwub4i4/audioblocks-positive-game-hit-magic-poof-spell-gameplay-2_SWXltuQFPL_NWM.mp3"
+    ),
+  ];
   const EMOJIS = [
     {
       emoji: "☹️",
       at: 1,
     },
     {
-      emoji: "😮",
+      emoji: "🙁",
       at: 3,
+    },
+    {
+      emoji: "😮",
+      at: 5,
     },
     {
       emoji: "🙂",
@@ -67,13 +80,16 @@
     },
   ];
   const MOTIVATIONAL_MESSAGES = [
-    "You can do this!",
-    "A*s coming on the way for sure!",
-    "How many more wtf?! stoppppp",
-    "How are you doing that??",
-    "If you continue like this, you can certainly do this",
-    "Bruh.. you are so much bigger than an A*!",
-    "If it was easy, everyone would be doing it 😎",
+    "You're mastering the concepts and excelling in A Level questions!",
+    "Great job, your understanding of A Level material is evident!",
+    "You're making impressive strides in A Level!",
+    "Keep up the fantastic work, you're well on your way to A Level success!",
+    "Your ability to tackle the questions with confidence is inspiring!",
+    "Your dedication to A Level studies is paying off, keep it up!",
+    "You're showing excellent problem-solving skills in A Level questions!",
+    "Keep pushing your limits in these questions, the results will speak for themselves!",
+    "You're expanding your knowledge and reaching new heights!",
+    "You're showing exceptional abilities in these questions, keep reaching for the stars!",
   ];
   class Stats {
     constructor(stats, subject) {
@@ -292,7 +308,7 @@
       this.motivatorContainerScreen.style.justifyContent = "center";
       this.motivatorContainerScreen.style.position = "absolute";
       this.motivatorContainerScreen.style.backgroundColor =
-        "rgba(0, 0, 0, 0.3)";
+        "rgba(0, 0, 0, 0.5)";
       this.motivatorContainerScreen.style.width = "100%";
       this.motivatorContainerScreen.style.height = "100%";
       this.motivatorContainerScreen.style.top = "0";
@@ -300,7 +316,7 @@
       this.motivatorContainerScreen.style.pointerEvents = "none";
       this.motivatorContainerScreen.style.textAlign = "center";
       this.motivatorContainerScreen.style.color = "#ff0000";
-      this.motivatorContainerScreen.style.fontSize = "50px";
+      this.motivatorContainerScreen.style.fontSize = "80px";
       this.motivatorContainerScreen.style.fontWeight = "bolder";
       this.motivatorContainerScreen.style.fontFamily =
         "'Helvetica', sans-serif";
@@ -327,10 +343,10 @@
       setTimeout(() => {
         this.motivatorContainerScreen.classList.remove("showm");
       }, 3000);
-      wow.play();
+      wows[Math.floor(Math.random() * wows.length)].play();
     }
     showRandom() {
-      const showOrNotArr = [0, 0, 1];
+      const showOrNotArr = [0, 0, 0, 1];
       const showOrNot =
         showOrNotArr[Math.floor(Math.random() * showOrNotArr.length)];
       const message =
@@ -340,13 +356,110 @@
       if (showOrNot) this.show(message);
     }
   }
+  class Money {
+    constructor(o_m) {
+      this.money_deserved = 0;
+      if (!(o_m === 0)) {
+        const decipheredM = mDecipher(o_m);
+        if (!isNaN(decipheredM) && !isNaN(parseFloat(decipheredM))) {
+          this.money_deserved = Number(decipheredM);
+          console.log("loaded money");
+        } else {
+          console.log("money has been tampered with.");
+        }
+      }
+      this.securitySolveArray = [];
+      this._cashConstant = 0.75;
+      this._createCounterElement();
+      this._timerInterval = null;
+      this._timeLeft = 30;
+    }
+    _createCounterElement() {
+      this.counterContainer = document.createElement("div");
+      this.counterContainer.style.position = "fixed";
+      this.counterContainer.style.left = "17px";
+      this.counterContainer.style.top = "100px";
+      this.counterContainer.style.width = "83px";
+      this.counterContainer.style.height = "38px";
+      this.counterContainer.style.backgroundColor = "transparent";
+      this.counterContainer.style.userSelect = "none";
+      this.counterContainer.style.cursor = "pointer";
 
+      this.countText = document.createElement("p");
+      this.countText.style.width = "100%";
+      this.countText.style.height = "100%";
+      this.countText.style.fontSize = "25px";
+      this.countText.style.fontFamily = "'Helvetica', sans-serif";
+      this.countText.style.color = "#000";
+      this.countText.style.textAlign = "center";
+      this.countText.style.lineHeight = "37px";
+      this.countText.style.fontWeight = "bold";
+
+      this._updateMoneyText();
+
+      this.counterContainer.appendChild(this.countText);
+      document.body.appendChild(this.counterContainer);
+    }
+    _updateMoneyText() {
+      this.countText.textContent = "₺" + this.money_deserved.toFixed(2);
+    }
+    add(q_name) {
+      if (this._timeLeft <= 0) {
+        this.money_deserved += this._cashConstant;
+        setStorageItem("m", mCipher(this.money_deserved.toString()));
+        this._updateMoneyText();
+      }
+    }
+
+    remove(q_name) {
+      if (this._timeLeft <= 0) {
+        this.money_deserved -= this._cashConstant;
+        setStorageItem("m", mCipher(this.money_deserved.toString()));
+        this._updateMoneyText();
+      }
+    }
+
+    timer_restart() {
+      this._timeLeft = 30;
+      this._timerInvterval = setInterval(() => {
+        this._timeLeft -= 1;
+        if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
+      }, 1000);
+    }
+  }
   const LOCALSTORAGEVALUES = {
     questions_solved: "solved",
     today_solved: "count",
     last_day_solved: "lastDay",
     stats: "stats",
   };
+  function cipher(salt) {
+    const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
+    const byteHex = (n) => ("0" + Number(n).toString(16)).substr(-2);
+    const applySaltToChar = (code) =>
+      textToChars(salt).reduce((a, b) => a ^ b, code);
+
+    return (text) =>
+      text
+        .split("")
+        .map(textToChars)
+        .map(applySaltToChar)
+        .map(byteHex)
+        .join("");
+  }
+
+  function decipher(salt) {
+    const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
+    const applySaltToChar = (code) =>
+      textToChars(salt).reduce((a, b) => a ^ b, code);
+    return (encoded) =>
+      encoded
+        .match(/.{1,2}/g)
+        .map((hex) => parseInt(hex, 16))
+        .map(applySaltToChar)
+        .map((charCode) => String.fromCharCode(charCode))
+        .join("");
+  }
 
   let solved = getFromStorage(LOCALSTORAGEVALUES.questions_solved, []);
   let lastDay = getFromStorage(LOCALSTORAGEVALUES.last_day_solved, 0);
@@ -366,6 +479,7 @@
     getFromStorage(LOCALSTORAGEVALUES.stats, null),
     subject
   );
+  const money = new Money(getFromStorage("m", 0));
   const motivator = new MotivatorMessages();
 
   //console.log(today, lastDay);
@@ -374,18 +488,16 @@
     setStorageItem(LOCALSTORAGEVALUES.last_day_solved, today);
   }
 
-  for (const question of questions) {
+  const createSolvedButton = (question) => {
     const tr = question.querySelector("table tr");
-    const button_template = tr.querySelector("td");
-    //console.log(button_template.querySelector("a").getAttribute("onClick").split(", '")[3].slice(0, -3));
-    const topicsIncludedString = button_template
+    const buttonTemplate = tr.querySelector("td");
+    const topicsIncludedString = buttonTemplate
       .querySelector("a")
       .getAttribute("onClick")
       .split(", '")[3]
       .slice(0, -3);
     const topicsIncludedArr = topicsIncludedString.split(", ");
-
-    const solvedBtn = button_template.cloneNode(true);
+    const solvedBtn = buttonTemplate.cloneNode(true);
     const solvedBtnFuncEl = solvedBtn.querySelector("a");
     solvedBtnFuncEl.setAttribute("onClick", "");
     solvedBtnFuncEl.setAttribute("href", "#");
@@ -394,16 +506,25 @@
       "s" + solvedBtnFuncEl.getAttribute("id").slice(1)
     );
     solvedBtnFuncEl.subjectTopics = topicsIncludedArr;
-
     tr.appendChild(solvedBtn);
+    return solvedBtnFuncEl;
+  };
+  for (const question of questions) {
+    const solvedBtnFuncEl = createSolvedButton(question);
 
     if (!solved.includes(solvedBtnFuncEl.getAttribute("id"))) {
       setSolved(solvedBtnFuncEl, false);
     } else {
       setSolved(solvedBtnFuncEl, true);
     }
+    // the orange question button
+    const questionBtn = button_template.querySelector("a");
+    questionBtn.addEventListener("click", () => {
+      money.timer_restart();
+    });
     solvedBtnFuncEl.addEventListener("click", () => {
-      setSolvedInput(solvedBtnFuncEl, !solvedBtnFuncEl.isSolved);
+      money.timer_restart();
+      setSolvedInput(solvedBtnFuncEl, !solvedBtnFuncEl.isSolved, questionBtn);
     });
   }
 
@@ -440,18 +561,35 @@
     fncEl.textContent = val ? "✔️" : "📝";
     fncEl.isSolved = val;
   }
-  function setSolvedInput(fncEl, val) {
+  function setSolvedInput(fncEl, val, btntmp) {
     setSolved(fncEl, val);
     if (val === true) {
       solved.push(fncEl.getAttribute("id"));
       niceAudio.play();
       counter.updateCount(1);
       stats.updateTopics(fncEl.subjectTopics, 1);
+      console.log(btntmp.getAttribute("style"));
+      // if the question is selected
+      if (
+        btntmp.getAttribute("style") ==
+        "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
+      ) {
+        money.add();
+      }
+
       motivator.showRandom();
     } else {
       solved.splice(solved.indexOf(fncEl.getAttribute("id")), 1);
       counter.updateCount(-1);
       stats.updateTopics(fncEl.subjectTopics, -1);
+
+      // if the question is selected
+      if (
+        btntmp.getAttribute("style") ==
+        "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
+      ) {
+        money.remove();
+      }
     }
 
     setStorageItem(LOCALSTORAGEVALUES.questions_solved, solved);
