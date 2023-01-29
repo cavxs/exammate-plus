@@ -488,9 +488,7 @@
     setStorageItem(LOCALSTORAGEVALUES.last_day_solved, today);
   }
 
-  const createSolvedButton = (question) => {
-    const tr = question.querySelector("table tr");
-    const buttonTemplate = tr.querySelector("td");
+  const createSolvedButton = (tr, buttonTemplate) => {
     const topicsIncludedString = buttonTemplate
       .querySelector("a")
       .getAttribute("onClick")
@@ -510,7 +508,9 @@
     return solvedBtnFuncEl;
   };
   for (const question of questions) {
-    const solvedBtnFuncEl = createSolvedButton(question);
+    const tr = question.querySelector("table tr");
+    const buttonTemplate = tr.querySelector("td");
+    const solvedBtnFuncEl = createSolvedButton(tr, buttonTemplate);
 
     if (!solved.includes(solvedBtnFuncEl.getAttribute("id"))) {
       setSolved(solvedBtnFuncEl, false);
@@ -518,7 +518,7 @@
       setSolved(solvedBtnFuncEl, true);
     }
     // the orange question button
-    const questionBtn = button_template.querySelector("a");
+    const questionBtn = buttonTemplate.querySelector("a");
     questionBtn.addEventListener("click", () => {
       money.timer_restart();
     });
