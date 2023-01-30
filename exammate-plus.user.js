@@ -404,6 +404,7 @@
       this.countText.textContent = "₺" + this.money_deserved.toFixed(2);
     }
     add(q_name) {
+      console.log(this._timeLeft);
       if (this._timeLeft <= 0) {
         this.money_deserved += this._cashConstant;
         setStorageItem("m", mCipher(this.money_deserved.toString()));
@@ -420,9 +421,12 @@
     }
 
     timer_restart() {
+      console.log("restarting timer");
       this._timeLeft = 30;
-      this._timerInvterval = setInterval(() => {
-        this._timeLeft -= 1;
+      if (this._timerInterval) clearInterval(this._timerInterval);
+      this._timerInterval = setInterval(() => {
+        this._timeLeft--;
+        console.log(this._timeLeft);
         if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
       }, 1000);
     }
@@ -523,7 +527,6 @@
       money.timer_restart();
     });
     solvedBtnFuncEl.addEventListener("click", () => {
-      money.timer_restart();
       setSolvedInput(solvedBtnFuncEl, !solvedBtnFuncEl.isSolved, questionBtn);
     });
   }
@@ -575,6 +578,7 @@
         "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
       ) {
         money.add();
+        money.timer_restart();
       }
 
       motivator.showRandom();
