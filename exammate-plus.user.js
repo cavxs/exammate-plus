@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.6.0
+// @version      1.6.1
 // @description  Exammate+
 // @author       cavxs
 // @homepage     https://github.com/cavxs
