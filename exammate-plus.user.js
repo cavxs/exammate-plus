@@ -176,7 +176,6 @@
       for (const s in newStatsObj) {
         for (const o in newStatsObj[s]) {
           if (o !== "total" && o !== "name" && o !== "topics") {
-            console.log(o);
             if (!newStatsObj[s]["topics"]) newStatsObj[s]["topics"] = {};
             newStatsObj[s]["topics"][o] = { ...newStatsObj[s][o] };
             delete newStatsObj[s][o];
@@ -363,7 +362,6 @@
         const decipheredM = mDecipher(o_m);
         if (!isNaN(decipheredM) && !isNaN(parseFloat(decipheredM))) {
           this.money_deserved = Number(decipheredM);
-          console.log("loaded money");
         } else {
           console.log("money has been tampered with.");
         }
@@ -404,7 +402,6 @@
       this.countText.textContent = "₺" + this.money_deserved.toFixed(2);
     }
     add(q_name) {
-      console.log(this._timeLeft);
       if (this._timeLeft <= 0) {
         this.money_deserved += this._cashConstant;
         setStorageItem("m", mCipher(this.money_deserved.toString()));
@@ -421,13 +418,13 @@
     }
 
     timer_restart() {
-      console.log("restarting timer");
       this._timeLeft = 30;
       if (this._timerInterval) clearInterval(this._timerInterval);
       this._timerInterval = setInterval(() => {
-        this._timeLeft--;
-        console.log(this._timeLeft);
-        if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
+        if (!document.hidden) {
+          this._timeLeft--;
+          if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
+        }
       }, 1000);
     }
   }
@@ -571,7 +568,6 @@
       niceAudio.play();
       counter.updateCount(1);
       stats.updateTopics(fncEl.subjectTopics, 1);
-      console.log(btntmp.getAttribute("style"));
       // if the question is selected
       if (
         btntmp.getAttribute("style") ==
