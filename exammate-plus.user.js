@@ -1,17 +1,20 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.6.1
+// @version      1.7.0
 // @description  Exammate+
 // @author       cavxs
 // @homepage     https://github.com/cavxs
-// @match        https://www.exam-mate.com/topicalpastpapers/*
+// @match        https://www.exam-mate.com/topicalpastpapers*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=exam-mate.com
-// @grant        none
+// @resource style https://raw.githubusercontent.com/cavxs/exammate-plus/main/style.css
+// @grant        GM_addStyle
+// @grant        GM_getResourceText
 // ==/UserScript==
 
 (function () {
   "use strict";
+  GM_addStyle(GM_getResourceText("style"));
   const niceAudio = new Audio(
     "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=correct-2-46134.mp3"
   );
@@ -23,6 +26,12 @@
     ),
     new Audio(
       "https://dm0qx8t0i9gc9.cloudfront.net/previews/audio/BsTwCwBHBjzwub4i4/audioblocks-positive-game-hit-magic-poof-spell-gameplay-2_SWXltuQFPL_NWM.mp3"
+    ),
+    new Audio(
+      "https://audio-previews.elements.envatousercontent.com/files/98129221/preview.mp3"
+    ),
+    new Audio(
+      "https://audio-previews.elements.envatousercontent.com/files/294342990/preview.mp3"
     ),
   ];
   const EMOJIS = [
@@ -100,28 +109,15 @@
     }
     createStatsElement() {
       const statsContainer = document.createElement("div");
-      statsContainer.style.width = "100%";
-      statsContainer.style.padding = "0 50px";
-      statsContainer.style.marginTop = "80px";
+      statsContainer.classList.add("statsContainer");
 
       const subjectName = document.createElement("h1");
-      subjectName.style.width = "100%";
-      subjectName.style.textAlign = "center";
-      subjectName.style.fontSize = "45px";
-      subjectName.style.fontFamily = "'Helvetica', sans-serif";
-      subjectName.style.color = "rgb(233, 65, 59)";
-      subjectName.style.fontWeight = "bold";
-      subjectName.textContent = this.subject.name;
+      subjectName.classList.add("subjectName");
       statsContainer.appendChild(subjectName);
 
       const totalText = document.createElement("h2");
+      totalText.classList.add("totalText");
       const total = this._getSubProp("total");
-      totalText.style.width = "100%";
-      totalText.style.textAlign = "center";
-      totalText.style.fontSize = "28px";
-      totalText.style.fontWeight = "bold";
-      totalText.style.fontFamily = "'Helvetica', sans-serif";
-      totalText.style.color = "#000";
 
       totalText.textContent =
         total == 0
@@ -132,13 +128,7 @@
       for (const topic in this._getSubProp("topics")) {
         const topicText = document.createElement("h2");
         const total = this._getSubProp("topics")[topic]["total"];
-        topicText.style.width = "100%";
-        topicText.style.textAlign = "left";
-        topicText.style.fontSize = "25px";
-        topicText.style.fontWeight = "bold";
-        topicText.style.marginTop = "50px";
-        topicText.style.fontFamily = "'Helvetica', sans-serif";
-        topicText.style.color = "#000";
+        topicText.classList.add("topicText");
         let stars = "";
         for (let x = total; x > 10; x -= 10) {
           stars = stars + "⭐";
@@ -230,35 +220,13 @@
     }
     _createCounterElement() {
       this.counterContainer = document.createElement("div");
-      this.counterContainer.style.position = "fixed";
-      this.counterContainer.style.left = "17px";
-      this.counterContainer.style.top = "13px";
-      this.counterContainer.style.width = "83px";
-      this.counterContainer.style.height = "38px";
-      this.counterContainer.style.backgroundColor = "#fff";
-      this.counterContainer.style.borderRadius = "16px";
-      this.counterContainer.style.userSelect = "none";
-      this.counterContainer.style.cursor = "pointer";
-      this.counterContainer.style.border = "solid 2px rgb(233, 65, 59)";
+      this.counterContainer.classList.add("counterContainer");
 
       this.countText = document.createElement("p");
-      this.countText.style.width = "100%";
-      this.countText.style.height = "100%";
-      this.countText.style.fontSize = "25px";
-      this.countText.style.fontFamily = "'Helvetica', sans-serif";
-      this.countText.style.color = "#000";
-      this.countText.style.textAlign = "center";
-      this.countText.style.lineHeight = "37px";
-      this.countText.style.fontWeight = "bold";
+      this.countText.classList.add("countText");
 
       this.face = document.createElement("div");
-      this.face.style.position = "fixed";
-      this.face.style.left = "17px";
-      this.face.style.top = "56px";
-      this.face.style.width = "83px";
-      this.face.style.fontSize = "30px";
-      this.face.style.textAlign = "center";
-      this.face.style.userSelect = "none";
+      this.face.classList.add("face");
 
       this.counterContainer.addEventListener("click", () => {
         this.count = 0;
@@ -281,7 +249,14 @@
         if (cnt < emoji_at_val.at) break;
         chosen_emoji = emoji_at_val.emoji;
       }
-      this.face.textContent = chosen_emoji;
+      if (this.face.textContent != chosen_emoji) {
+        this.face.classList.remove("rotate");
+        this.face.offsetWidth;
+        this.face.classList.add("rotate");
+        setTimeout(() => {
+          this.face.textContent = chosen_emoji;
+        }, 500);
+      }
     }
     _updateCountText() {
       this.countText.textContent = this.count + " 🔥";
@@ -302,46 +277,16 @@
   class MotivatorMessages {
     constructor() {
       this.motivatorContainerScreen = document.createElement("div");
-      this.motivatorContainerScreen.style.display = "flex";
-      this.motivatorContainerScreen.style.alignItems = "center";
-      this.motivatorContainerScreen.style.justifyContent = "center";
-      this.motivatorContainerScreen.style.position = "absolute";
-      this.motivatorContainerScreen.style.backgroundColor =
-        "rgba(0, 0, 0, 0.5)";
-      this.motivatorContainerScreen.style.width = "100%";
-      this.motivatorContainerScreen.style.height = "100%";
-      this.motivatorContainerScreen.style.top = "0";
-      this.motivatorContainerScreen.style.left = "0";
-      this.motivatorContainerScreen.style.pointerEvents = "none";
-      this.motivatorContainerScreen.style.textAlign = "center";
-      this.motivatorContainerScreen.style.color = "#ff0000";
-      this.motivatorContainerScreen.style.fontSize = "80px";
-      this.motivatorContainerScreen.style.fontWeight = "bolder";
-      this.motivatorContainerScreen.style.fontFamily =
-        "'Helvetica', sans-serif";
+      this.motivatorContainerScreen.classList.add("motivatorContainerScreen");
       this.motivatorContainerScreen.classList.add("motivator");
-      const styles = `
-   .motivator {
-   transition: 0.5s all;
-   opacity: 0;
-   }
-  .motivator.showm {
-  transition: 0.2s all;
-  opacity: 1;
-  }
-`;
-      var styleSheet = document.createElement("style");
-      styleSheet.innerText = styles;
-
-      document.head.appendChild(styleSheet);
       document.body.appendChild(this.motivatorContainerScreen);
     }
     show(msg) {
       this.motivatorContainerScreen.textContent = msg;
-      this.motivatorContainerScreen.classList.add("showm");
+      this.motivatorContainerScreen.classList.add("shown");
       setTimeout(() => {
-        this.motivatorContainerScreen.classList.remove("showm");
-      }, 3000);
+        this.motivatorContainerScreen.classList.remove("shown");
+      }, 5000);
       wows[Math.floor(Math.random() * wows.length)].play();
     }
     showRandom() {
@@ -367,62 +312,67 @@
         }
       }
       this.securitySolveArray = [];
-      this._cashConstant = 0.75;
-      this._createCounterElement();
+      this._cashConstant = {
+        9709: [0.5, 0.5, 0.5, 0.6, 0.7],
+        9700: [0.2, 0.5, 0.5, 0.6, 0.6],
+        9701: [0.2, 0.5, 0.5, 0.6, 0.6],
+        9702: [0.2, 0.5, 0.5, 0.6, 0.6],
+      };
+      this._createMoneyElement();
       this._timerInterval = null;
-      this._timeLeft = 30;
+      this._timeLeft = 20;
+      this._moneyJustAdded = 0;
     }
-    _createCounterElement() {
-      this.counterContainer = document.createElement("div");
-      this.counterContainer.style.position = "fixed";
-      this.counterContainer.style.left = "17px";
-      this.counterContainer.style.top = "100px";
-      this.counterContainer.style.width = "83px";
-      this.counterContainer.style.height = "38px";
-      this.counterContainer.style.backgroundColor = "transparent";
-      this.counterContainer.style.userSelect = "none";
-      this.counterContainer.style.cursor = "pointer";
+    _createMoneyElement() {
+      this.moneyContainer = document.createElement("div");
+      this.moneyContainer.classList.add("counterContainer");
+      this.moneyContainer.classList.add("money");
 
-      this.countText = document.createElement("p");
-      this.countText.style.width = "100%";
-      this.countText.style.height = "100%";
-      this.countText.style.fontSize = "25px";
-      this.countText.style.fontFamily = "'Helvetica', sans-serif";
-      this.countText.style.color = "#000";
-      this.countText.style.textAlign = "center";
-      this.countText.style.lineHeight = "37px";
-      this.countText.style.fontWeight = "bold";
+      this.moneyText = document.createElement("p");
+      this.moneyText.classList.add("countText");
 
       this._updateMoneyText();
 
-      this.counterContainer.appendChild(this.countText);
-      document.body.appendChild(this.counterContainer);
+      this.moneyContainer.appendChild(this.moneyText);
+      document.body.appendChild(this.moneyContainer);
     }
     _updateMoneyText() {
-      this.countText.textContent = "₺" + this.money_deserved.toFixed(2);
+      this.moneyText.textContent = `₺${this.money_deserved.toFixed(2)}`;
     }
-    add(q_name) {
-      if (this._timeLeft <= 0) {
-        this.money_deserved += this._cashConstant;
-        setStorageItem("m", mCipher(this.money_deserved.toString()));
-        this._updateMoneyText();
-      }
+    /**
+     *
+     * @param {object} qtype this is the paper subject and the paper type, is it paper 1 or 2 or etc.. it will be considered when adding money
+     */
+    add(qtype, fncEl = null) {
+      if (this._timeLeft > 0) return;
+
+      const moneyToAdd = this._cashConstant[qtype.subject][qtype.paper - 1];
+      this._moneyJustAdded = moneyToAdd * (fncEl?.isDouble ? 2 : 1);
+      this.money_deserved += this._moneyJustAdded;
+
+      if (fncEl) fncEl.isDouble = false;
+
+      this.saveMoney();
+    }
+    remove() {
+      if (this._timeLeft > 0) return;
+
+      this.money_deserved -= this._moneyJustAdded;
+      this.saveMoney();
+    }
+    saveMoney() {
+      setStorageItem("m", mCipher(this.money_deserved.toString()));
+      this._updateMoneyText();
     }
 
-    remove(q_name) {
-      if (this._timeLeft <= 0) {
-        this.money_deserved -= this._cashConstant;
-        setStorageItem("m", mCipher(this.money_deserved.toString()));
-        this._updateMoneyText();
-      }
-    }
-
-    timer_restart() {
-      this._timeLeft = 30;
+    timer_restart(qtype) {
+      this._timeLeft =
+        (this._cashConstant[qtype.subject][qtype.paper - 1] / 0.6) * 40;
       if (this._timerInterval) clearInterval(this._timerInterval);
       this._timerInterval = setInterval(() => {
         if (!document.hidden) {
           this._timeLeft--;
+          console.log(this._timeLeft);
           if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
         }
       }, 1000);
@@ -514,17 +464,23 @@
     const solvedBtnFuncEl = createSolvedButton(tr, buttonTemplate);
 
     if (!solved.includes(solvedBtnFuncEl.getAttribute("id"))) {
-      setSolved(solvedBtnFuncEl, false);
+      setSolved(solvedBtnFuncEl, false, true);
     } else {
-      setSolved(solvedBtnFuncEl, true);
+      setSolved(solvedBtnFuncEl, true, true);
     }
+    const qInfo = getQuestionInfo(question);
     // the orange question button
     const questionBtn = buttonTemplate.querySelector("a");
     questionBtn.addEventListener("click", () => {
-      money.timer_restart();
+      money.timer_restart(qInfo);
     });
     solvedBtnFuncEl.addEventListener("click", () => {
-      setSolvedInput(solvedBtnFuncEl, !solvedBtnFuncEl.isSolved, questionBtn);
+      setSolvedInput(
+        solvedBtnFuncEl,
+        !solvedBtnFuncEl.isSolved,
+        questionBtn,
+        qInfo
+      );
     });
   }
 
@@ -557,13 +513,28 @@
     localStorage.setItem(item, JSON.stringify(val));
   }
 
-  function setSolved(fncEl, val) {
+  function setSolved(fncEl, val, pgLoad = false) {
     fncEl.textContent = val ? "✔️" : "📝";
     fncEl.isSolved = val;
+    if (!val && pgLoad) fncEl.isDouble = Math.random() < 0.3 ? true : false;
+    if (fncEl.isDouble) fncEl.textContent += "💰";
   }
-  function setSolvedInput(fncEl, val, btntmp) {
-    setSolved(fncEl, val);
-    if (val === true) {
+  /**
+   * This function gives general information about the question
+   * @param {HTML Element} questionHtml the html element of the question.
+   * @returns {object} an object with 'subject' and 'paper' that represents the subject and the paper of the question
+   */
+  function getQuestionInfo(questionHtml) {
+    const paperInfoText = questionHtml.firstElementChild.textContent
+      .trim()
+      .split(" ");
+    return {
+      subject: paperInfoText[0].substring(1, paperInfoText[0].length - 2),
+      paper: Number(paperInfoText[2][0]),
+    };
+  }
+  function setSolvedInput(fncEl, val, btntmp, qtype) {
+    if (val) {
       solved.push(fncEl.getAttribute("id"));
       niceAudio.play();
       counter.updateCount(1);
@@ -573,8 +544,7 @@
         btntmp.getAttribute("style") ==
         "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
       ) {
-        money.add();
-        money.timer_restart();
+        money.add(qtype, fncEl);
       }
 
       motivator.showRandom();
@@ -591,7 +561,7 @@
         money.remove();
       }
     }
-
+    setSolved(fncEl, val);
     setStorageItem(LOCALSTORAGEVALUES.questions_solved, solved);
   }
 })();
