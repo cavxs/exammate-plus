@@ -1,0 +1,139 @@
+.statsContainer {
+  width: 100%;
+  padding: 0 50px;
+  margin-top: 80px;
+}
+
+.statsContainer .subjectName {
+  width: 100%;
+  text-align: center;
+  font-size: 45px;
+  font-family: "Helvetica", sans-serif;
+  color: rgb(233, 65, 59);
+  font-weight: bold;
+}
+
+.statsContainer .totalText {
+  width: 100%;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  font-family: "Helvetica", sans-serif;
+  color: #000;
+}
+
+.statsContainer .topicText {
+  width: 100%;
+  text-align: left;
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 50px;
+  font-family: "Helvetica", sans-serif;
+  color: #000;
+}
+
+.counterContainer {
+  position: fixed;
+  left: 17px;
+  top: 13px;
+  width: 83px;
+  height: 38px;
+  background-color: #fff;
+  border-radius: 16px;
+  user-select: none;
+  cursor: pointer;
+  border: solid 3px rgb(233, 65, 59);
+}
+
+.counterContainer.money {
+  top: 60px;
+}
+
+/* the count with the fire next to it */
+.counterContainer .countText {
+  width: 100%;
+  height: 100%;
+  font-size: 25px;
+  font-family: "Helvetica", sans-serif;
+  color: #000;
+  text-align: center;
+  line-height: 37px;
+  font-weight: bold;
+}
+
+.counterContainer .face {
+  position: fixed;
+  left: 17px;
+  top: 100px;
+  width: 83px;
+  font-size: 35px;
+  text-align: center;
+  user-select: none;
+}
+
+.counterContainer .face.rotate {
+  animation: faceRotation 1.4s cubic-bezier(0.62, 0, 0.31, 1.38);
+}
+
+@keyframes faceRotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(720deg);
+  }
+}
+
+/* .moneyContainer {
+  position: fixed;
+  left: 17px;
+  top: 100px;
+  width: 83px;
+  height: 38px;
+  background-color: transparent;
+  border-radius: 16px;
+  user-select: none;
+  pointer-events: none;
+} */
+
+.motivatorContainerScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  text-align: center;
+  color: yellow;
+  font-size: 100px;
+  font-weight: 900;
+  line-height: 120px;
+  font-family: "Helvetica", sans-serif;
+}
+
+.motivatorContainerScreen.motivator {
+  transition: 0.5s all;
+  opacity: 0;
+}
+
+.motivatorContainerScreen.motivator.shown {
+  transition: 0.2s all;
+  opacity: 1;
+  animation: rainbow 2s infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    color: rgb(255, 242, 0);
+  }
+  0% {
+    color: rgb(255, 249, 125);
+  }
+  0% {
+    color: rgb(255, 244, 40);
+  }
+}
