@@ -1,41 +1,34 @@
 # exammate-plus
-This is a Tampermonkey script. Install Tampermonkey to use.
-After installing Tampermonkey, press the exammate-plus.user.js file on github and head into raw view. Tampermonkey will automatically detect and ask you to install the script.
-
-You're ready to use it now, visit https://www.exam-mate.com/topicalpastpapers/ to see it in action!
-
-Exam-mate is a highly recommended website whose membership I urge you to buy if you want to practice solving past papers. But they also offer solving for free. Visit their website at https://www.exam-mate.com/ to learn more.
+Get ready to enhance your exam preparation with Exam-mate Plus! To use, simply install Tampermonkey, then press the exammate-plus.user.js file on Github and go to raw view. Tampermonkey will prompt you to install the script. Once installed, visit https://www.exam-mate.com/topicalpastpapers/ to start using it. Improve your exam skills by solving past papers on Exam-mate. Visit their website at https://www.exam-mate.com/ to learn more and consider purchasing a membership.
 
 ## Features 
-- Adds a 📝 button. Solve a question and press it to mark the question as solved.
-- Track the number of questions you solved today by a sticker at the top right. Click the sticker to reset the counter.
-- A small cute face that changes as you solve more questions to help motivate you.
-- Randomly gives motivational messages as you solve questions.
-- See your stats on specific topics by looking just under the question panel. Refresh the page to update it.
-- Receive a star in the stats for every 10 questions you solve from a specific topic
-- A money system that can be customized in code. The app does not give you money, it merely securely determines the amount you should give yourself after solving a specific number of questions. The system is in early development and isn't customizable as of yet because I intended this application for my sisters; however, once more people start using it, I'll certainly make this system more customizable and write a guide on customization.
+- 📝 button to mark solved questions
+- Sticker counter at the top right to track solved questions for the day (click to reset)
+- A cute, motivational face that changes as you solve more questions
+- Random motivational messages to boost your motivation
+- Stats for specific topics just under the question panel (refresh the page to update)
+- Earn a star for every 10 questions solved from a specific topic
+- Customizable money system (currently in early development, but will be made more customizable in the future with a guide on customization)
 
 ## Project
-First of all, the main feature of this script is to help you with a way to count the number of questions you solved on the website. So every question is fitted with a cool button which when clicked marks the question as solved and increses the counter on the top left.
+Get ready to have some fun and improve your problem-solving skills with this amazing script! The main idea is to help you track how many questions you've solved on the website. Every question comes with a cool button that, when clicked, marks the question as solved and increases the counter on the top left.
+  
+Check out the transformation!
 #### Before
 ![Questions before](images/questions.before.PNG)  
 #### After  
 ![Questions after](images/solving.PNG)  
-This counter refreshes every single day.
-Now obviously, that's not enough motivation. It's just counting. That's why you notice things a bit more than a counter. Let's talk about the face first.  
+And the best part? The counter refreshes every day! But wait, there's more. The face on the left side of the screen is like a cheerleader for your progress. It starts sad and gets more amazed as you solve more questions.  
   
-#### The face is more like someone watching your progress and getting amazed more the more questions you do. It starts with a sad face and changes later on.  
-![Left side bar](images/left&#32;side&#32;bar.PNG)  
-Another feature is the money under the questions solved counter. This money is a way to reward yourself the more you do questions. The script is trained to detect whether you solved a question or not and rewards you with money that you can give yourself after completing you study session.  
+![Left side bar](images/left&#32;side&#32;bar.PNG)    
+And what's better than a happy face? A happy face and money! Every time you solve a question, you'll earn some virtual cash that you can reward yourself with after a study session. 
   
-#### Now if that's not enough, the script also randomly jumpscares you with motivational messages like this one to boost your motivation:  
+To keep you motivated, the script will randomly jump scare you with motivational messages like this one:  
 ![Motivational messages](images/motivation.PNG)  
   
-#### Not only that, but the script also adds shows your stats in the current subject just under the question display:
+And to help you focus, the script also shows your stats in the current subject just under the question display:
 ![Motivational messages](images/stats.PNG)  
-The stats include the number of questions you solved in each topic of the subject you're on, so you know which topic to focus more on.  
-Sometimes the questions solved in each topic don't add up to the total number of questions and that's because some questions span over multiple topics, in other words, they count as +1 for each topic but only +1 for the total.
-Of course, you notice the stars. Every time you solve 10 questions in a specific topic, you get a ⭐.  
+This includes the number of questions you've solved in each topic, so you know where to focus more. Keep in mind that some questions span over multiple topics and will count as +1 for each topic but only +1 for the total.  
   
-#### Finally, not all questions are the same, some questions give you double money! These have a special emoji next to them:  
+Achieve more and earn stars! Every time you solve 10 questions in a specific topic, you'll get a shining ⭐. And for a special treat, some questions will give you double the money! They have a special emoji next to them, so keep an eye out!  
 ![Unsolved Double Money](images/unsolved&#32;double&#32;money.PNG)
