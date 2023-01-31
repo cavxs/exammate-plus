@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         exammate+
 // @namespace    http://tampermonkey.net/
-// @version      1.7.0
+// @version      1.7.1
 // @description  Exammate+
 // @author       cavxs
 // @homepage     https://github.com/cavxs
@@ -322,6 +322,7 @@
       this._timerInterval = null;
       this._timeLeft = 20;
       this._moneyJustAdded = 0;
+      this._currentQ = "";
     }
     _createMoneyElement() {
       this.moneyContainer = document.createElement("div");
@@ -365,17 +366,19 @@
       this._updateMoneyText();
     }
 
-    timer_restart(qtype) {
-      this._timeLeft =
-        (this._cashConstant[qtype.subject][qtype.paper - 1] / 0.6) * 40;
-      if (this._timerInterval) clearInterval(this._timerInterval);
-      this._timerInterval = setInterval(() => {
-        if (!document.hidden) {
-          this._timeLeft--;
-          console.log(this._timeLeft);
-          if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
-        }
-      }, 1000);
+    timer_restart(qtype, qid) {
+      if (this._currentQ != qid) {
+        this._currentQ = qid;
+        this._timeLeft =
+          (this._cashConstant[qtype.subject][qtype.paper - 1] / 0.6) * 40;
+        if (this._timerInterval) clearInterval(this._timerInterval);
+        this._timerInterval = setInterval(() => {
+          if (!document.hidden) {
+            this._timeLeft--;
+            if (this._timeLeft <= 0) return clearInterval(this._timerInterval);
+          }
+        }, 1000);
+      }
     }
   }
   const LOCALSTORAGEVALUES = {
@@ -460,8 +463,9 @@
   };
   for (const question of questions) {
     const tr = question.querySelector("table tr");
-    const buttonTemplate = tr.querySelector("td");
-    const solvedBtnFuncEl = createSolvedButton(tr, buttonTemplate);
+    const allButtons = tr.querySelectorAll("td");
+    const questionBtn = allButtons[0];
+    const solvedBtnFuncEl = createSolvedButton(tr, questionBtn);
 
     if (!solved.includes(solvedBtnFuncEl.getAttribute("id"))) {
       setSolved(solvedBtnFuncEl, false, true);
@@ -470,15 +474,15 @@
     }
     const qInfo = getQuestionInfo(question);
     // the orange question button
-    const questionBtn = buttonTemplate.querySelector("a");
-    questionBtn.addEventListener("click", () => {
-      money.timer_restart(qInfo);
+    const questionBtnA = questionBtn.querySelector("a");
+    questionBtnA.addEventListener("click", () => {
+      money.timer_restart(qInfo, question.getAttribute("id"));
     });
     solvedBtnFuncEl.addEventListener("click", () => {
       setSolvedInput(
         solvedBtnFuncEl,
         !solvedBtnFuncEl.isSolved,
-        questionBtn,
+        onQuestion(allButtons),
         qInfo
       );
     });
@@ -533,17 +537,30 @@
       paper: Number(paperInfoText[2][0]),
     };
   }
-  function setSolvedInput(fncEl, val, btntmp, qtype) {
+  /**
+   * gets if the user is on the question. i.e. they pressed the 'Question' or 'Answer' button and are looking at the question
+   * @param {HTML element array} allButtons
+   * @returns {boolean}
+   */
+  function onQuestion(allButtons) {
+    const quesBtn = allButtons[0].querySelector("a");
+    const ansBtn = allButtons[1].querySelector("a");
+
+    return (
+      quesBtn.getAttribute("style") ===
+        "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;" ||
+      ansBtn.getAttribute("style") ===
+        "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
+    );
+  }
+  function setSolvedInput(fncEl, val, onQues, qtype) {
     if (val) {
       solved.push(fncEl.getAttribute("id"));
       niceAudio.play();
       counter.updateCount(1);
       stats.updateTopics(fncEl.subjectTopics, 1);
       // if the question is selected
-      if (
-        btntmp.getAttribute("style") ==
-        "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
-      ) {
+      if (onQues) {
         money.add(qtype, fncEl);
       }
 
@@ -554,10 +571,7 @@
       stats.updateTopics(fncEl.subjectTopics, -1);
 
       // if the question is selected
-      if (
-        btntmp.getAttribute("style") ==
-        "padding-top: 5px; background-color: rgb(233, 65, 59) !important; color: rgb(255, 255, 255) !important;"
-      ) {
+      if (onQues) {
         money.remove();
       }
     }
